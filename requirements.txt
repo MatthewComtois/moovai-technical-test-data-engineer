@@ -1,5 +1,3 @@
-faker
-fastapi
-uvicorn
-fastapi_pagination
-pytest
+apache-airflow[celery]==2.10.4
+python-dotenv
+pandas

@@ -2,7 +2,6 @@ import requests
 import os
 
 FASTAPI_URL = os.getenv("FASTAPI_URL", "http://0.0.0.0:8000")
-FASTAPI_URL = "http://fastapi:8000"
 
 def get_moovitamix_data(endpoint: str) -> dict:
     url = f"{FASTAPI_URL}/{endpoint}"

@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from airflow.decorators import dag, task
 from utils.mysql_helper import create_users_table, create_tracks_table, create_listen_history, insert_users, insert_tracks, insert_listen_history
-from airflow.dags.utils.moovitamix_api_helper import get_voovitamix_users, get_voovitamix_tracks, get_voovitamix_listen_history
+from utils.moovitamix_api_helper import get_moovitamix_users, get_moovitamix_tracks, get_moovitamix_listen_history
 import os
 import pandas as pd
 
@@ -13,8 +13,8 @@ MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
 @task
 def extract_users_data():
     try:
-        logging.info("Start fetching users data from Voovitamix API.")
-        users = get_voovitamix_users()
+        logging.info("Start fetching users data from Moovitamix API.")
+        users = get_moovitamix_users()
         logging.info(f"Fetched {len(users)} users.")
         return pd.DataFrame(users)
     except Exception as e:
@@ -49,8 +49,8 @@ def load_user_data(cleaned_users_df: pd.DataFrame):
 @task
 def extract_tracks_data():
     try:
-        logging.info("Start fetching tracks data from Voovitamix API.")
-        tracks = get_voovitamix_tracks()
+        logging.info("Start fetching tracks data from Moovitamix API.")
+        tracks = get_moovitamix_tracks()
         logging.info(f"Fetched {len(tracks)} tracks.")
         return pd.DataFrame(tracks)
     except Exception as e:
@@ -85,8 +85,8 @@ def load_tracks_data(cleaned_tracks_df: pd.DataFrame):
 @task
 def extract_listening_history_data():
     try:
-        logging.info("Start fetching listening history data from Voovitamix API.")
-        listening_history = get_voovitamix_listen_history()
+        logging.info("Start fetching listening history data from Moovitamix API.")
+        listening_history = get_moovitamix_listen_history()
         logging.info(f"Fetched {len(listening_history)} listening history data.")
         return pd.DataFrame(listening_history)
     except Exception as e:

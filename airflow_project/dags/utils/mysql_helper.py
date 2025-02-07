@@ -2,14 +2,15 @@ import mysql.connector
 import os
 import pandas as pd
 
-MYSQL_HOST = os.getenv("MYSQL_HOST", "localhost")
+MYSQL_HOST = os.getenv("MYSQL_HOST", "0.0.0.0")
 MYSQL_USER = os.getenv("MYSQL_USER", "root")
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "root")
 
 
-def get_mysql_connection(db_name: str) -> mysql.connector.MySQLConnection:
+def get_mysql_connection(db_name : str) -> mysql.connector.MySQLConnection:
     return mysql.connector.connect(
         host=MYSQL_HOST,
+        port=3306,
         user=MYSQL_USER,
         password=MYSQL_PASSWORD,
         database=db_name,
@@ -31,6 +32,7 @@ def create_users_table(db_name: str):
         )"""
     )
     connection.commit()
+    mycursor.close()
     connection.close()
 
 def create_tracks_table(db_name: str):
@@ -62,7 +64,8 @@ def create_listen_history(db_name: str):
             track_id INT,
             PRIMARY KEY (user_id, track_id),
             FOREIGN KEY (user_id) REFERENCES users(id),
-            FOREIGN KEY (track_id) REFERENCES tracks(id)
+            FOREIGN KEY (track_id) REFERENCES tracks(id),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )"""
     )
     connection.commit()
@@ -122,7 +125,7 @@ def insert_tracks(db_name: str, tracks: pd.DataFrame):
                 WHEN VALUES(updated_at) > updated_at THEN VALUES(artist)
                 ELSE artist
             END,
-            songwriters=CASE
+            songwriter=CASE
                 WHEN VALUES(updated_at) > updated_at THEN VALUES(songwriter)
                 ELSE songwriter
             END,
@@ -156,8 +159,38 @@ def insert_listen_history(db_name: str, listen_history: pd.DataFrame):
         INSERT IGNORE INTO listen_history (user_id, track_id)
         VALUES (%s, %s);
     """
-    listen_history_list = [(row['user_id'], row["track_id"]) for _, row in listen_history.iterrows()]
+    listen_history_list = [(int(row['user_id']), int(row["track_id"])) for _, row in listen_history.iterrows()]
     mycursor.executemany(query, listen_history_list)
+    connection.commit()
+    mycursor.close()
+    connection.close()
+
+
+#-----------------------------------------
+# Mainly used for testing
+#-----------------------------------------
+def create_database(db_name: str):
+    connection = mysql.connector.connect(
+        host=MYSQL_HOST,
+        port=3306,
+        user=MYSQL_USER,
+        password=MYSQL_PASSWORD
+    )
+    mycursor = connection.cursor()
+    mycursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
+    connection.commit()
+    mycursor.close()
+    connection.close()
+
+def delete_database(db_name: str):
+    connection = mysql.connector.connect(
+        host=MYSQL_HOST,
+        port=3306,
+        user=MYSQL_USER,
+        password=MYSQL_PASSWORD
+    )
+    mycursor = connection.cursor()
+    mycursor.execute(f"DROP DATABASE IF EXISTS {db_name}")
     connection.commit()
     mycursor.close()
     connection.close()

@@ -1,0 +1,42 @@
+@startuml
+entity Track {
+    id INT PRIMARY KEY
+    --
+    name VARCHAR(255)
+    artist VARCHAR(255)
+    songwriter VARCHAR(255)
+    duration VARCHAR(255)
+    album VARCHAR(255)
+    genre VARCHAR(255)
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
+}
+
+
+entity User {
+    id INT PRIMARY KEY
+    --
+    id INT PRIMARY KEY
+    first_name VARCHAR(255)
+    last_name VARCHAR(255)
+    email VARCHAR(255)
+    gender VARCHAR(255)
+    favorite_genre VARCHAR(255)
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
+}
+
+entity ListenHistory {
+    (user_id, track_id) PRIMARY KEY 
+    --
+    user_id INT
+    track_id INT
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+}
+
+
+
+Track "1" -- "*" ListenHistory : user_id
+User "1" -- "*" ListenHistory : user_id
+
+@enduml

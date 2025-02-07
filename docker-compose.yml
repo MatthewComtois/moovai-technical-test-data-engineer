@@ -3,7 +3,7 @@
 x-airflow-common:
   &airflow-common
   build:
-    context: ./airflow
+    context: ./airflow_project
   env_file:
     - .env
   environment:
@@ -84,6 +84,8 @@ services:
       MYSQL_USER: ${MYSQL_USER:-airflow}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-airflow}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-airflow}
+    ports:
+      - "3306:3306"
     volumes:
       - mysql-db-volume:/var/lib/mysql
     healthcheck:
