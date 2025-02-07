@@ -25,6 +25,8 @@ Pour exécuter des flux de données, j'ai décidé d'utiliser Airflow. C'est un 
 
 Une fois que la solution est déployée, le flux de données devrait être exécuté chaque jour à 9h. L'heure est un peu arbitraire pour l'instant et devrait être ajustée selon les besoins du projet. Il pourrait être aussi bon de considérer une heure où les ressources sont le moins utilisées, ce qui peut améliorer la performance du flux et aussi ne pas affecter la performance de l'API. Pour changer l'heure d'exécution, il suffit d'aller dans le fichier [suivant](../airflow_project/dags/music_reco/load_moovitamix_to_mysl.py).
 
+Pour voir les flux de données, vous pouvez vous rendre sur le dashboard d'Airflow. Pour le déploiement en local, le dashboard est disponible à l'adresse suivante: http://localhost:8080/ . Pour se connecter, utiliser le nom d'utilisateur et le mot de passe spécifié dans le fichier `.env` (je le mentionne plus bas). Il est possible d'exécuter manuellement les flux de données à partir de ce dashboard.
+
 ## Déploiment de la solutions
 
 Pour simplifier le déploiement de la solution, j'ai décidé d'utiliser `docker compose`. Ceci permet de tout déployer en une seule ligne de commande.
@@ -103,7 +105,8 @@ Pour l'exécution des tests, vous devez faire les étapes suivantes:
 - Exécuter les tests en exécutant la commande suivante:
   ```pytest```
 
-
+IMPORTANT: Si jamais vous avez des erreurs lors des tests, je recommande d'exécuter la commande suivante:
+```unset MYSQL_USER FASTAPI_URL MYSQL_ROOT_PASSWORD MYSQL_DATABASE MYSQL_PASSWORD```. Je n'ai pas réussi à trouvé la source du problème, mais il arrive que les variables d'enviromment dans le fichier `.env` sont enregistré dans le système et peuvent causer des erreurs lors des tests. Je ne sais pas si c'est un problème sur mon ordinateur ou dans le code. J'ai cherché en ligne pour trouver une solution, mais je n'ai pas trouvé.
 
 ## Questions (étapes 4 à 7)
 
